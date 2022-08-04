@@ -1,46 +1,16 @@
 import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
 import { quizWords } from '../utils/common';
+import { QuestionContext, useQuestionStore } from '../utils/QuestionStore';
 
-const Quiz = ({ addPoint }: { addPoint: () => void }) => {
+const Quiz = () => {
 	const [data, setData] = useState(quizWords(10));
-	const [selected, setSelected] = useState<{
-		left: number;
-		right: number;
-		goods: number[];
-	}>({
-		left: -1,
-		right: -1,
-		goods: [],
-	});
+	const { state, left: onLeft, right: onRight } = useContext(QuestionContext);
 
-	const check = () => {
-		setSelected((s) => {
-			if (s.left > -1 && s.left === s.right) {
-				addPoint();
-
-				return {
-					goods: [...s.goods, s.left],
-					left: -1,
-					right: -1,
-				};
-			} else {
-				return s;
-			}
-		});
-	};
-
-	const selectLeft = (pos: number) => {
-		setSelected((s) => ({ ...s, left: pos }));
-		check();
-	};
-
-	const selectRight = (pos: number) => {
-		setSelected((s) => ({ ...s, right: pos }));
-		check();
-	};
+	const getMode = (e: { pos: number }): WordMode =>
+		state.goods.includes(e.pos) ? 'GOOD' : 'BASE';
 
 	return (
 		<HStack gap={1}>
@@ -48,18 +18,16 @@ const Quiz = ({ addPoint }: { addPoint: () => void }) => {
 				style={{ height: 'calc(100vh - 6rem)', overflowY: 'scroll' }}
 			>
 				{data.left.map((e) => {
-					let mode: WordMode = selected.goods.includes(e.pos)
-						? 'GOOD'
-						: 'BASE';
+					let mode = getMode(e);
 
-					if (e.pos === selected.left) {
+					if (e.pos === state.left) {
 						mode = 'CHOOSEN';
 					}
 
 					return (
 						<QuizButton
 							mode={mode}
-							onSelect={selectLeft}
+							onSelect={onLeft}
 							word={e}
 							key={e.pos}
 						></QuizButton>
@@ -70,18 +38,16 @@ const Quiz = ({ addPoint }: { addPoint: () => void }) => {
 				style={{ height: 'calc(100vh - 6rem)', overflowY: 'scroll' }}
 			>
 				{data.right.map((e) => {
-					let mode: WordMode = selected.goods.includes(e.pos)
-						? 'GOOD'
-						: 'BASE';
+					let mode = getMode(e);
 
-					if (e.pos === selected.right) {
+					if (e.pos === state.right) {
 						mode = 'CHOOSEN';
 					}
 
 					return (
 						<QuizButton
 							mode={mode}
-							onSelect={selectRight}
+							onSelect={onRight}
 							word={e}
 							lang="hu"
 							key={e.pos}
@@ -95,20 +61,16 @@ const Quiz = ({ addPoint }: { addPoint: () => void }) => {
 
 const Question: NextPage = () => {
 	const [begin, setBegin] = useState(false);
-	const [points, setPoints] = useState(0);
+	const questionHandler = useQuestionStore();
 
 	return (
-		<VStack justify="center" gap="1">
-			<Box>Pontok: {points}</Box>
-			<Button onClick={() => setBegin(!begin)}>Keverés</Button>
-			{begin && (
-				<Quiz
-					addPoint={() => {
-						setTimeout(() => setPoints(points + 1), 0);
-					}}
-				/>
-			)}
-		</VStack>
+		<QuestionContext.Provider value={questionHandler}>
+			<VStack justify="center" gap="1">
+				<Box>Pontok: {questionHandler.state.points}</Box>
+				<Button onClick={() => setBegin(!begin)}>Keverés</Button>
+				{begin && <Quiz />}
+			</VStack>
+		</QuestionContext.Provider>
 	);
 };
 
