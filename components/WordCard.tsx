@@ -1,5 +1,5 @@
 import { Button, HStack, VStack } from '@chakra-ui/react';
-import { clipartUrl, translateUrl, Word, Langs } from '../utils/common';
+import { clipartUrl, translateUrl, Word, Langs, speech } from '../utils/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe, faImage } from '@fortawesome/free-solid-svg-icons';
 
@@ -26,6 +26,10 @@ export const QuizButton = ({
 				size="md"
 				onClick={() => {
 					if (mode !== 'GOOD') {
+						if (lang === 'en') {
+							speech(word.en);
+						}
+
 						onSelect(word.pos);
 					}
 				}}

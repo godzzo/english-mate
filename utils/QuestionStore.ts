@@ -1,5 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react';
-import { quizWords } from './common';
+import { quizWords, speech } from './common';
 
 type QuestionState = {
 	data: {
@@ -67,6 +67,8 @@ export function useQuestionStore() {
 
 	useEffect(() => {
 		if (state.left > -1 && state.left === state.right) {
+			speech('Good work!');
+
 			dispatch({ type: 'ADD_POINT' });
 			// TODO: XHR to save good word and point?...
 		}
@@ -75,6 +77,7 @@ export function useQuestionStore() {
 	useEffect(() => {
 		if (state.left > -1 && state.right > -1 && state.left !== state.right) {
 			// TODO: XHR to send wrong word...
+			speech('Try again!');
 		}
 	}, [state.left, state.right]);
 
@@ -87,6 +90,7 @@ export function useQuestionStore() {
 			dispatch({ type: 'RIGHT', right });
 		},
 		shuffle: () => {
+			speech('Words are ready');
 			dispatch({ type: 'SHUFFLE' });
 		},
 	};

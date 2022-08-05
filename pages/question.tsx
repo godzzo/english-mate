@@ -2,6 +2,7 @@ import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import { useState, useContext, CSSProperties, useEffect } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
+import { speech } from '../utils/common';
 import { QuestionContext, useQuestionStore } from '../utils/QuestionStore';
 
 const stackStyle: CSSProperties = {
@@ -75,16 +76,23 @@ const Question: NextPage = () => {
 	return (
 		<QuestionContext.Provider value={questionHandler}>
 			<VStack justify="center" gap="1">
-				<Box>Pontok: {points}</Box>
-				<Button
-					onClick={() => {
-						shuffle();
+				<HStack>
+					<Box>Pontok: {points}</Box>
+					<Button
+						colorScheme="purple"
+						onClick={() => {
+							shuffle();
 
-						setBegin(!begin);
-					}}
-				>
-					Keverés
-				</Button>
+							if (!begin) {
+								speech("Common. Let's go!");
+							}
+
+							setBegin(!begin);
+						}}
+					>
+						Keverés
+					</Button>
+				</HStack>
 				{begin && <Quiz />}
 			</VStack>
 		</QuestionContext.Provider>

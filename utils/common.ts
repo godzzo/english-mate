@@ -80,3 +80,12 @@ export function shuffle(array: any[]) {
 
 	return array;
 }
+
+export function speech(text: string) {
+	const speech = new SpeechSynthesisUtterance();
+
+	speech.lang = 'en';
+	speech.text = text;
+
+	window.speechSynthesis.speak(speech);
+}
