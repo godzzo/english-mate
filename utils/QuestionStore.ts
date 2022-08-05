@@ -1,6 +1,11 @@
 import { createContext, useEffect, useReducer } from 'react';
+import { quizWords } from './common';
 
 type QuestionState = {
+	data: {
+		left: any[];
+		right: any[];
+	};
 	left: number;
 	right: number;
 	goods: number[];
@@ -9,6 +14,10 @@ type QuestionState = {
 
 export function initialState(): QuestionState {
 	return {
+		data: {
+			left: [],
+			right: [],
+		},
 		left: -1,
 		right: -1,
 		goods: [],
@@ -19,7 +28,8 @@ export function initialState(): QuestionState {
 type QuestionAction =
 	| { type: 'LEFT'; left: number }
 	| { type: 'RIGHT'; right: number }
-	| { type: 'ADD_POINT' };
+	| { type: 'ADD_POINT' }
+	| { type: 'SHUFFLE' };
 
 export function reducer(
 	state: QuestionState,
@@ -34,6 +44,14 @@ export function reducer(
 			...state,
 			goods: [...state.goods, state.left],
 			points: state.points + 1,
+			left: -1,
+			right: -1,
+		};
+	} else if (action.type === 'SHUFFLE') {
+		return {
+			...state,
+			data: quizWords(10),
+			goods: [],
 			left: -1,
 			right: -1,
 		};
@@ -67,6 +85,9 @@ export function useQuestionStore() {
 		},
 		right: (right: number) => {
 			dispatch({ type: 'RIGHT', right });
+		},
+		shuffle: () => {
+			dispatch({ type: 'SHUFFLE' });
 		},
 	};
 

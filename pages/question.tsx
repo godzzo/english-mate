@@ -1,8 +1,7 @@
 import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import { useState, useContext, CSSProperties } from 'react';
+import { useState, useContext, CSSProperties, useEffect } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
-import { quizWords } from '../utils/common';
 import { QuestionContext, useQuestionStore } from '../utils/QuestionStore';
 
 const stackStyle: CSSProperties = {
@@ -11,7 +10,6 @@ const stackStyle: CSSProperties = {
 };
 
 const Quiz = () => {
-	const [data] = useState(quizWords(10));
 	const { state, left: onLeft, right: onRight } = useContext(QuestionContext);
 
 	const getMode = (e: { pos: number }): WordMode =>
@@ -20,7 +18,7 @@ const Quiz = () => {
 	return (
 		<HStack gap={1}>
 			<VStack style={stackStyle}>
-				{data.left.map((e) => {
+				{state.data.left.map((e) => {
 					let mode = getMode(e);
 
 					if (e.pos === state.left) {
@@ -38,7 +36,7 @@ const Quiz = () => {
 				})}
 			</VStack>
 			<VStack style={stackStyle}>
-				{data.right.map((e) => {
+				{state.data.right.map((e) => {
 					let mode = getMode(e);
 
 					if (e.pos === state.right) {
@@ -63,12 +61,30 @@ const Quiz = () => {
 const Question: NextPage = () => {
 	const [begin, setBegin] = useState(false);
 	const questionHandler = useQuestionStore();
+	const {
+		state: { goods, points },
+		shuffle,
+	} = questionHandler;
+
+	useEffect(() => {
+		if (goods.length > 3) {
+			shuffle();
+		}
+	}, [goods, shuffle]);
 
 	return (
 		<QuestionContext.Provider value={questionHandler}>
 			<VStack justify="center" gap="1">
-				<Box>Pontok: {questionHandler.state.points}</Box>
-				<Button onClick={() => setBegin(!begin)}>Keverés</Button>
+				<Box>Pontok: {points}</Box>
+				<Button
+					onClick={() => {
+						shuffle();
+
+						setBegin(!begin);
+					}}
+				>
+					Keverés
+				</Button>
 				{begin && <Quiz />}
 			</VStack>
 		</QuestionContext.Provider>
