@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
-import { UserContext, useUserStore } from '../utils/UserStore';
+import { AppContext, useAppStore } from '../utils/AppStore';
 
 const colors = {
 	brand: {
@@ -15,14 +15,14 @@ const colors = {
 const theme = extendTheme({ colors });
 
 function MyApp({ Component, pageProps }: AppProps) {
-	const userHandler = useUserStore();
+	const appHandler = useAppStore();
 
 	return (
-		<UserContext.Provider value={userHandler}>
+		<AppContext.Provider value={appHandler}>
 			<ChakraProvider theme={theme}>
 				<Component {...pageProps} />
 			</ChakraProvider>
-		</UserContext.Provider>
+		</AppContext.Provider>
 	);
 }
 

@@ -1,6 +1,8 @@
 import { Button, VStack } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import { useContext } from 'react';
+import { AppContext } from '../utils/AppStore';
 
 const Menu = () => {
 	return (
@@ -15,9 +17,16 @@ const Menu = () => {
 };
 
 const Home: NextPage = () => {
+	const { name, change } = useContext(AppContext);
+
 	return (
 		<VStack p={4}>
+			{name}
 			<Menu />
+			<input
+				onChange={(e) => change(e.target.value)}
+				value={name}
+			></input>
 		</VStack>
 	);
 };
