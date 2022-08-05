@@ -50,7 +50,7 @@ export function reducer(
 	} else if (action.type === 'SHUFFLE') {
 		return {
 			...state,
-			data: quizWords(10),
+			data: quizWords(15),
 			goods: [],
 			left: -1,
 			right: -1,

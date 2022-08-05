@@ -1,5 +1,7 @@
 import { Button, HStack, VStack } from '@chakra-ui/react';
 import { clipartUrl, translateUrl, Word, Langs } from '../utils/common';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGlobe, faImage } from '@fortawesome/free-solid-svg-icons';
 
 export type WordMode = 'BASE' | 'CHOOSEN' | 'GOOD';
 
@@ -18,7 +20,7 @@ export const QuizButton = ({
 		mode === 'BASE' ? 'blue' : mode === 'CHOOSEN' ? 'yellow' : 'green';
 
 	return (
-		<VStack>
+		<HStack>
 			<Button
 				colorScheme={color}
 				size="md"
@@ -30,19 +32,17 @@ export const QuizButton = ({
 			>
 				{word[lang]}
 			</Button>
-			<HStack>
-				<a
-					href={translateUrl(word.en, 'en')}
-					target="_blank"
-					rel="noreferrer"
-				>
-					Translate
-				</a>
-				<a href={clipartUrl(word.en)} target="_blank" rel="noreferrer">
-					Clipart
-				</a>
-			</HStack>
-		</VStack>
+			<a
+				href={translateUrl(word.en, 'en')}
+				target="_blank"
+				rel="noreferrer"
+			>
+				<FontAwesomeIcon icon={faGlobe} />
+			</a>
+			<a href={clipartUrl(word.en)} target="_blank" rel="noreferrer">
+				<FontAwesomeIcon icon={faImage} />
+			</a>
+		</HStack>
 	);
 };
 
