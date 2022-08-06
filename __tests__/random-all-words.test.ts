@@ -26,7 +26,7 @@ describe('Calculator', () => {
 		expect(duplications.length).toBe(0);
 		expect(all.length).toBe(words.length);
 
-		// const fifth = randomWords(25, buffer);
+		const fifth = randomWords(25, buffer);
 	});
 });
 

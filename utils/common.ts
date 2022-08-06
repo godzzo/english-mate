@@ -29,13 +29,13 @@ export const words: Word[] = wordsData.map((e) => ({ hu: e[0], en: e[1] }));
 export class WordBuffer {
 	data: number[] = [];
 
-	constructor(public size = 100) {}
+	constructor(public size = 100, private popSize = 50) {}
 
 	add(pos: number) {
 		this.data.push(pos);
 
 		if (this.data.length > this.size) {
-			this.data.shift();
+			this.data = this.data.slice(this.popSize);
 		}
 	}
 
@@ -60,18 +60,19 @@ export function randomWord(
 	do {
 		pos = Math.floor(Math.random() * data.length);
 
-		console.log('TRY', {
-			pos,
-			bufferIncludes: buffer.includes(pos),
-			listIncludes: listIncludes(pos),
-			i,
-		});
+		// console.log('TRY', {
+		// 	pos,
+		// 	bufferIncludes: buffer.includes(pos),
+		// 	listIncludes: listIncludes(pos),
+		// 	i,
+		// });
+
 		i++;
 	} while ((buffer.includes(pos) || listIncludes(pos)) && i < MAX_TRY);
 
 	buffer.add(pos);
 
-	console.log(`random word ${pos}`, data[pos]);
+	// console.log(`random word ${pos}`, data[pos]);
 
 	return { ...data[pos], pos };
 }
