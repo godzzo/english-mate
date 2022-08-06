@@ -1,5 +1,11 @@
 import { Button, HStack, VStack } from '@chakra-ui/react';
-import { clipartUrl, translateUrl, Word, Langs, speech } from '../utils/common';
+import {
+	clipartUrl,
+	translateUrl,
+	Langs,
+	speech,
+	WordPos,
+} from '../utils/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe, faImage } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,7 +17,7 @@ export const QuizButton = ({
 	onSelect,
 	lang = 'en',
 }: {
-	word: Word & { pos: number };
+	word: WordPos;
 	mode: WordMode;
 	onSelect: (pos: number) => void;
 	lang?: Langs;
@@ -54,7 +60,7 @@ export const WordButton = ({
 	word,
 	lang = 'en',
 }: {
-	word: Word;
+	word: WordPos;
 	lang?: Langs;
 }) => {
 	return (

@@ -2,6 +2,7 @@ import { wordsData } from './words';
 
 export type Langs = 'hu' | 'en';
 export type Word = { hu: string; en: string };
+export type WordPos = Word & { pos: number };
 
 export function translateUrl(expr: string, lng: Langs) {
 	const url = 'https://translate.google.com/';
@@ -23,31 +24,54 @@ export function clipartUrl(expr: string) {
 
 export const words: Word[] = wordsData.map((e) => ({ hu: e[0], en: e[1] }));
 
-const randomBuffer: number[] = [];
-const randomBufferSize = 50;
+console.log('words', words);
 
-export function randomWord() {
+export class WordBuffer {
+	data: number[] = [];
+
+	constructor(public size = 100) {}
+
+	add(pos: number) {
+		this.data.push(pos);
+
+		if (this.data.length > this.size) {
+			this.data.shift();
+		}
+	}
+
+	includes(pos: number) {
+		return this.data.includes(pos);
+	}
+}
+
+const randomBuffer = new WordBuffer();
+
+export function randomWord(buffer = randomBuffer, list: WordPos[] = []) {
 	let pos = 0;
+	let i = 0;
+
+	const listIncludes = (p: number) => list.find((e) => e.pos === p);
 
 	do {
 		pos = Math.floor(Math.random() * words.length);
-	} while (randomBuffer.includes(pos));
+		i++;
+	} while (buffer.includes(pos) && listIncludes(pos) && buffer.size * 2 < i);
 
-	randomBuffer.push(pos);
+	buffer.add(pos);
 
-	if (randomBuffer.length > randomBufferSize) {
-		randomBuffer.shift();
-	}
+	console.log(`random word ${pos}`, words[pos]);
 
-	return words[pos];
+	return { ...words[pos], pos };
 }
 
-export function randomWords(length: number) {
-	const out = [];
+export function randomWords(length: number, buffer = randomBuffer) {
+	const out: WordPos[] = [];
 
 	for (let i = 0; i < length; i++) {
-		out.push(randomWord());
+		out.push(randomWord(buffer, out));
 	}
+
+	console.log(`random words`, out);
 
 	return out;
 }
@@ -55,13 +79,13 @@ export function randomWords(length: number) {
 export function quizWords(length: number) {
 	const words = randomWords(length);
 
-	const left = shuffle(words.map((w, i) => ({ ...w, pos: i })));
-	const right = shuffle(words.map((w, i) => ({ ...w, pos: i })));
+	const left = shuffle(words.map((w) => ({ ...w })));
+	const right = shuffle(words.map((w) => ({ ...w })));
 
 	return { left, right };
 }
 
-export function shuffle(array: any[]) {
+export function shuffle<T>(array: T[]): T[] {
 	let currentIndex = array.length,
 		randomIndex;
 

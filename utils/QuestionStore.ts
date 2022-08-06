@@ -1,10 +1,10 @@
 import { createContext, useEffect, useReducer } from 'react';
-import { quizWords, speech } from './common';
+import { quizWords, speech, WordPos } from './common';
 
 type QuestionState = {
 	data: {
-		left: any[];
-		right: any[];
+		left: WordPos[];
+		right: WordPos[];
 	};
 	left: number;
 	right: number;
