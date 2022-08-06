@@ -24,7 +24,7 @@ export function clipartUrl(expr: string) {
 
 export const words: Word[] = wordsData.map((e) => ({ hu: e[0], en: e[1] }));
 
-console.log('words', words);
+// console.log('words', words);
 
 export class WordBuffer {
 	data: number[] = [];
@@ -46,29 +46,33 @@ export class WordBuffer {
 
 const randomBuffer = new WordBuffer();
 
-export function randomWord(buffer = randomBuffer, list: WordPos[] = []) {
+export function randomWord(
+	list: WordPos[] = [],
+	buffer = randomBuffer,
+	data = words
+) {
 	let pos = 0;
 	let i = 0;
 
 	const listIncludes = (p: number) => list.find((e) => e.pos === p);
 
 	do {
-		pos = Math.floor(Math.random() * words.length);
+		pos = Math.floor(Math.random() * data.length);
 		i++;
 	} while (buffer.includes(pos) && listIncludes(pos) && buffer.size * 2 < i);
 
 	buffer.add(pos);
 
-	console.log(`random word ${pos}`, words[pos]);
+	console.log(`random word ${pos}`, data[pos]);
 
-	return { ...words[pos], pos };
+	return { ...data[pos], pos };
 }
 
 export function randomWords(length: number, buffer = randomBuffer) {
 	const out: WordPos[] = [];
 
 	for (let i = 0; i < length; i++) {
-		out.push(randomWord(buffer, out));
+		out.push(randomWord(out, buffer));
 	}
 
 	console.log(`random words`, out);
