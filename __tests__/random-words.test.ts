@@ -24,6 +24,7 @@ describe('Calculator', () => {
 
 		console.log('forbidden', forbidden);
 		console.log('found', found);
+		console.log('buffer', buffer.data);
 
 		expect(found.pos).toBe(allowedPos);
 	});

@@ -45,6 +45,7 @@ export class WordBuffer {
 }
 
 const randomBuffer = new WordBuffer();
+const MAX_TRY = 2048;
 
 export function randomWord(
 	list: WordPos[] = [],
@@ -58,8 +59,15 @@ export function randomWord(
 
 	do {
 		pos = Math.floor(Math.random() * data.length);
+
+		console.log('TRY', {
+			pos,
+			bufferIncludes: buffer.includes(pos),
+			listIncludes: listIncludes(pos),
+			i,
+		});
 		i++;
-	} while (buffer.includes(pos) && listIncludes(pos) && buffer.size * 2 < i);
+	} while ((buffer.includes(pos) || listIncludes(pos)) && i < MAX_TRY);
 
 	buffer.add(pos);
 
