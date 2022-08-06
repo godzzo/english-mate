@@ -81,9 +81,8 @@ const Question: NextPage = () => {
 					<Button
 						colorScheme="purple"
 						onClick={() => {
-							shuffle();
-
 							if (!begin) {
+								shuffle();
 								speech("Common. Let's go!");
 							}
 
