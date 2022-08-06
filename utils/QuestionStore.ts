@@ -1,10 +1,21 @@
 import { createContext, useEffect, useReducer } from 'react';
-import { quizWords, speech, WordPos, quizFillWords } from './common';
+import {
+	quizWords,
+	speech,
+	WordPos,
+	quizFillWords,
+	WordBuffer,
+	words,
+	cities,
+} from './common';
 
 export const PAGE_SIZE = 10;
 export const GOODS_LENGTH = 5;
 
+type QuestionMode = 'words' | 'cities';
+
 type QuestionState = {
+	mode: QuestionMode;
 	data: {
 		left: WordPos[];
 		right: WordPos[];
@@ -15,8 +26,20 @@ type QuestionState = {
 	points: number;
 };
 
-export function initialState(): QuestionState {
+const QuestionModes = {
+	cities: {
+		buffer: new WordBuffer(200),
+		data: cities,
+	},
+	words: {
+		buffer: new WordBuffer(),
+		data: words,
+	},
+};
+
+function initialState(mode: QuestionMode): QuestionState {
 	return {
+		mode,
 		data: {
 			left: [],
 			right: [],
@@ -34,10 +57,9 @@ type QuestionAction =
 	| { type: 'ADD_POINT' }
 	| { type: 'SHUFFLE' };
 
-export function reducer(
-	state: QuestionState,
-	action: QuestionAction
-): QuestionState {
+function reducer(state: QuestionState, action: QuestionAction): QuestionState {
+	const qMode = QuestionModes[state.mode];
+
 	if (action.type === 'LEFT') {
 		return { ...state, left: action.left };
 	} else if (action.type === 'RIGHT') {
@@ -53,8 +75,13 @@ export function reducer(
 	} else if (action.type === 'SHUFFLE') {
 		const data =
 			state.goods.length == 0
-				? quizWords(PAGE_SIZE)
-				: quizFillWords(state.data, state.goods);
+				? quizWords(PAGE_SIZE, qMode.buffer, undefined, qMode.data)
+				: quizFillWords(
+						state.data,
+						state.goods,
+						qMode.buffer,
+						qMode.data
+				  );
 
 		return {
 			...state,
@@ -68,8 +95,8 @@ export function reducer(
 	}
 }
 
-export function useQuestionStore() {
-	const [state, dispatch] = useReducer(reducer, initialState());
+export function useQuestionStore(mode: 'words' | 'cities' = 'words') {
+	const [state, dispatch] = useReducer(reducer, initialState(mode));
 
 	useEffect(() => console.log('Exam State Changed', state), [state]);
 

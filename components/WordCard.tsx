@@ -72,6 +72,49 @@ export const QuizButton = ({
 	);
 };
 
+export const CityButton = ({
+	word,
+	mode,
+	onSelect,
+	lang = 'en',
+}: {
+	word: WordPos;
+	mode: WordMode;
+	onSelect: (pos: number) => void;
+	lang?: Langs;
+}) => {
+	let color =
+		mode === 'BASE' ? 'blue' : mode === 'CHOOSEN' ? 'yellow' : 'green';
+
+	return (
+		<HStack spacing={1}>
+			<Button
+				colorScheme={color}
+				size="md"
+				onClick={() => {
+					if (mode !== 'GOOD') {
+						if (lang === 'en') {
+							speech(word.en);
+						}
+
+						onSelect(word.pos);
+					}
+				}}
+			>
+				{word[lang]}
+			</Button>
+			<a
+				href={`https://www.google.com/maps/place/${word.en}%20capital%20city`}
+				target="_blank"
+				rel="noreferrer"
+				style={IconStyle}
+			>
+				<FontAwesomeIcon icon={faGlobe} />
+			</a>
+		</HStack>
+	);
+};
+
 export const WordButton = ({
 	word,
 	lang = 'en',

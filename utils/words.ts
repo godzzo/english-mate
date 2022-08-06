@@ -61,7 +61,7 @@ export const wordsData = [
 	['szeretni', 'love'],
 	['csinalni, készíteni', 'make'],
 	['jelenteni', 'mean'],
-	['találkozni (először)', 'meet'],
+	['találkozni', 'meet'],
 	['fizetni', 'pay'],
 	['játszani', 'play'],
 	['focizni', 'play football'],

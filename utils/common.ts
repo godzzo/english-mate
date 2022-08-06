@@ -1,3 +1,4 @@
+import { citiesData } from './cities';
 import { wordsData } from './words';
 
 export type Langs = 'hu' | 'en';
@@ -23,6 +24,7 @@ export function clipartUrl(expr: string) {
 }
 
 export const words: Word[] = wordsData.map((e) => ({ hu: e[0], en: e[1] }));
+export const cities: Word[] = citiesData.map((e) => ({ hu: e[0], en: e[1] }));
 
 // console.log('words', words);
 
@@ -80,12 +82,13 @@ export function randomWord(
 export function randomWords(
 	length: number,
 	buffer = randomBuffer,
-	list: WordPos[] = []
+	list: WordPos[] = [],
+	data = words
 ) {
 	const out: WordPos[] = [];
 
 	for (let i = 0; i < length; i++) {
-		out.push(randomWord([...out, ...list], buffer));
+		out.push(randomWord([...out, ...list], buffer, data));
 	}
 
 	console.log(`random words`, out);
@@ -98,12 +101,13 @@ export type QuizData = { left: WordPos[]; right: WordPos[] };
 export function quizWords(
 	length: number,
 	buffer = randomBuffer,
-	list: WordPos[] = []
+	list: WordPos[] = [],
+	data = words
 ): QuizData {
-	const words = randomWords(length, buffer, list);
+	const result = randomWords(length, buffer, list, data);
 
-	const left = shuffle(words.map((w) => ({ ...w })));
-	const right = shuffle(words.map((w) => ({ ...w })));
+	const left = shuffle(result.map((w) => ({ ...w })));
+	const right = shuffle(result.map((w) => ({ ...w })));
 
 	return { left, right };
 }
@@ -111,21 +115,23 @@ export function quizWords(
 export function quizFillWords(
 	previous: QuizData,
 	goods: number[],
-	buffer = randomBuffer
+	buffer = randomBuffer,
+	data = words
 ): QuizData {
 	const forbidden = previous.left.filter((e) => goods.includes(e.pos));
 
-	const words = randomWords(
+	const result = randomWords(
 		previous.left.length - goods.length,
 		buffer,
-		forbidden
+		forbidden,
+		data
 	);
 
 	const prevLeft = previous.left.filter((e) => !goods.includes(e.pos));
 	const prevRight = previous.right.filter((e) => !goods.includes(e.pos));
 
-	const left = shuffle([...prevLeft, ...words].map((w) => ({ ...w })));
-	const right = shuffle([...prevRight, ...words].map((w) => ({ ...w })));
+	const left = shuffle([...prevLeft, ...result].map((w) => ({ ...w })));
+	const right = shuffle([...prevRight, ...result].map((w) => ({ ...w })));
 
 	return {
 		left,

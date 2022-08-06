@@ -12,6 +12,11 @@ const Menu = () => {
 					Szó párosítás
 				</Button>
 			</Link>
+			<Link href="/cities">
+				<Button colorScheme="blue" size="md">
+					Fővárosok
+				</Button>
+			</Link>
 		</VStack>
 	);
 };
