@@ -5,6 +5,7 @@ import {
 	Langs,
 	speech,
 	WordPos,
+	Word,
 } from '../utils/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe, faImage } from '@fortawesome/free-solid-svg-icons';
@@ -60,7 +61,7 @@ export const WordButton = ({
 	word,
 	lang = 'en',
 }: {
-	word: WordPos;
+	word: Word;
 	lang?: Langs;
 }) => {
 	return (

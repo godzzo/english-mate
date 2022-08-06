@@ -1,5 +1,7 @@
 import { words, randomWords, WordBuffer } from '../utils/common';
 
+// .\node_modules\.bin\jest -- random-all-words.test.ts > random-all-words.test.log
+
 describe('Calculator', () => {
 	it('testing all words found in result', () => {
 		const buffer = new WordBuffer();
@@ -23,6 +25,8 @@ describe('Calculator', () => {
 
 		expect(duplications.length).toBe(0);
 		expect(all.length).toBe(words.length);
+
+		// const fifth = randomWords(25, buffer);
 	});
 });
 
