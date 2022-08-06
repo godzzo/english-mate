@@ -1,5 +1,8 @@
 import { createContext, useEffect, useReducer } from 'react';
-import { quizWords, speech, WordPos } from './common';
+import { quizWords, speech, WordPos, quizFillWords } from './common';
+
+export const PAGE_SIZE = 10;
+export const GOODS_LENGTH = 5;
 
 type QuestionState = {
 	data: {
@@ -48,9 +51,14 @@ export function reducer(
 			right: -1,
 		};
 	} else if (action.type === 'SHUFFLE') {
+		const data =
+			state.goods.length == 0
+				? quizWords(PAGE_SIZE)
+				: quizFillWords(state.data, state.goods);
+
 		return {
 			...state,
-			data: quizWords(15),
+			data,
 			goods: [],
 			left: -1,
 			right: -1,

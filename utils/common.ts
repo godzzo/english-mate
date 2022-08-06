@@ -77,11 +77,15 @@ export function randomWord(
 	return { ...data[pos], pos };
 }
 
-export function randomWords(length: number, buffer = randomBuffer) {
+export function randomWords(
+	length: number,
+	buffer = randomBuffer,
+	list: WordPos[] = []
+) {
 	const out: WordPos[] = [];
 
 	for (let i = 0; i < length; i++) {
-		out.push(randomWord(out, buffer));
+		out.push(randomWord([...out, ...list], buffer));
 	}
 
 	console.log(`random words`, out);
@@ -89,13 +93,44 @@ export function randomWords(length: number, buffer = randomBuffer) {
 	return out;
 }
 
-export function quizWords(length: number) {
-	const words = randomWords(length);
+export type QuizData = { left: WordPos[]; right: WordPos[] };
+
+export function quizWords(
+	length: number,
+	buffer = randomBuffer,
+	list: WordPos[] = []
+): QuizData {
+	const words = randomWords(length, buffer, list);
 
 	const left = shuffle(words.map((w) => ({ ...w })));
 	const right = shuffle(words.map((w) => ({ ...w })));
 
 	return { left, right };
+}
+
+export function quizFillWords(
+	previous: QuizData,
+	goods: number[],
+	buffer = randomBuffer
+): QuizData {
+	const forbidden = previous.left.filter((e) => goods.includes(e.pos));
+
+	const words = randomWords(
+		previous.left.length - goods.length,
+		buffer,
+		forbidden
+	);
+
+	const prevLeft = previous.left.filter((e) => !goods.includes(e.pos));
+	const prevRight = previous.right.filter((e) => !goods.includes(e.pos));
+
+	const left = shuffle([...prevLeft, ...words].map((w) => ({ ...w })));
+	const right = shuffle([...prevRight, ...words].map((w) => ({ ...w })));
+
+	return {
+		left,
+		right,
+	};
 }
 
 export function shuffle<T>(array: T[]): T[] {

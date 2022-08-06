@@ -3,7 +3,11 @@ import { NextPage } from 'next';
 import { useState, useContext, CSSProperties, useEffect } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
 import { speech } from '../utils/common';
-import { QuestionContext, useQuestionStore } from '../utils/QuestionStore';
+import {
+	GOODS_LENGTH,
+	QuestionContext,
+	useQuestionStore,
+} from '../utils/QuestionStore';
 
 const stackStyle: CSSProperties = {
 	height: 'calc(100vh - 6rem)',
@@ -19,22 +23,24 @@ const Quiz = () => {
 	return (
 		<HStack gap={1}>
 			<VStack style={stackStyle}>
-				{state.data.left.map((e) => {
-					let mode = getMode(e);
+				{state.data.left
+					.filter((_, i) => i < GOODS_LENGTH)
+					.map((e) => {
+						let mode = getMode(e);
 
-					if (e.pos === state.left) {
-						mode = 'CHOOSEN';
-					}
+						if (e.pos === state.left) {
+							mode = 'CHOOSEN';
+						}
 
-					return (
-						<QuizButton
-							mode={mode}
-							onSelect={onLeft}
-							word={e}
-							key={e.pos}
-						></QuizButton>
-					);
-				})}
+						return (
+							<QuizButton
+								mode={mode}
+								onSelect={onLeft}
+								word={e}
+								key={e.pos}
+							></QuizButton>
+						);
+					})}
 			</VStack>
 			<VStack style={stackStyle}>
 				{state.data.right.map((e) => {
@@ -68,14 +74,14 @@ const Question: NextPage = () => {
 	} = questionHandler;
 
 	useEffect(() => {
-		if (goods.length > 3) {
+		if (goods.length > GOODS_LENGTH - 1) {
 			shuffle();
 		}
 	}, [goods, shuffle]);
 
 	return (
 		<QuestionContext.Provider value={questionHandler}>
-			<VStack justify="center" gap="1">
+			<VStack justify="center" marginTop={1} gap="1">
 				<HStack>
 					<Box>Pontok: {points}</Box>
 					<Button

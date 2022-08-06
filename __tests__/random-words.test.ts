@@ -10,7 +10,7 @@ const data = [
 
 const words = data.map((e) => ({ hu: e[0], en: e[1] }));
 
-describe('Calculator', () => {
+describe('Random words', () => {
 	it('testing forbidden list', () => {
 		const buffer = new WordBuffer();
 

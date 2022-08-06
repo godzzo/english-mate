@@ -9,8 +9,17 @@ import {
 } from '../utils/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe, faImage } from '@fortawesome/free-solid-svg-icons';
+import { CSSProperties } from 'react';
 
 export type WordMode = 'BASE' | 'CHOOSEN' | 'GOOD';
+
+const IconStyle: CSSProperties = {
+	display: 'flex',
+	padding: '0.4rem',
+	backgroundColor: 'cornflowerblue',
+	color: 'white',
+	borderRadius: '5px',
+};
 
 export const QuizButton = ({
 	word,
@@ -27,7 +36,7 @@ export const QuizButton = ({
 		mode === 'BASE' ? 'blue' : mode === 'CHOOSEN' ? 'yellow' : 'green';
 
 	return (
-		<HStack>
+		<HStack spacing={1}>
 			<Button
 				colorScheme={color}
 				size="md"
@@ -47,10 +56,16 @@ export const QuizButton = ({
 				href={translateUrl(word.en, 'en')}
 				target="_blank"
 				rel="noreferrer"
+				style={IconStyle}
 			>
 				<FontAwesomeIcon icon={faGlobe} />
 			</a>
-			<a href={clipartUrl(word.en)} target="_blank" rel="noreferrer">
+			<a
+				style={IconStyle}
+				href={clipartUrl(word.en)}
+				target="_blank"
+				rel="noreferrer"
+			>
 				<FontAwesomeIcon icon={faImage} />
 			</a>
 		</HStack>

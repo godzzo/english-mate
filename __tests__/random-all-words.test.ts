@@ -2,7 +2,7 @@ import { words, randomWords, WordBuffer } from '../utils/common';
 
 // .\node_modules\.bin\jest -- random-all-words.test.ts > random-all-words.test.log
 
-describe('Calculator', () => {
+describe('Random ALL words', () => {
 	it('testing all words found in result', () => {
 		const buffer = new WordBuffer(100, 50);
 		const pageSize = 25;
