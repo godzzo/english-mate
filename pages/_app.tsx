@@ -19,15 +19,19 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
-function MyApp({ Component, pageProps }: AppProps) {
+import { SessionProvider } from 'next-auth/react';
+
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	const appHandler = useAppStore();
 
 	return (
-		<AppContext.Provider value={appHandler}>
-			<ChakraProvider theme={theme}>
-				<Component {...pageProps} />
-			</ChakraProvider>
-		</AppContext.Provider>
+		<SessionProvider session={session}>
+			<AppContext.Provider value={appHandler}>
+				<ChakraProvider theme={theme}>
+					<Component {...pageProps} />
+				</ChakraProvider>
+			</AppContext.Provider>
+		</SessionProvider>
 	);
 }
 

@@ -2,6 +2,7 @@ import { Button, VStack } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useContext } from 'react';
+import LoginButton from '../components/LoginButton';
 import { AppContext } from '../utils/AppStore';
 
 const Menu = () => {
@@ -28,6 +29,7 @@ const Home: NextPage = () => {
 		<VStack p={4}>
 			{name}
 			<Menu />
+			<LoginButton></LoginButton>
 			<input
 				onChange={(e) => change(e.target.value)}
 				value={name}
