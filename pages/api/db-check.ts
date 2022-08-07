@@ -10,7 +10,9 @@ function getPool() {
 		password:
 			'9144aaa048c69e166779c796e56ae700c879bdf7e1a3587422562d95fc6a61c6',
 		port: 5432,
-		ssl: true,
+		ssl: {
+			rejectUnauthorized: false,
+		},
 	});
 }
 
