@@ -1,7 +1,9 @@
 import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import { useState, useContext, CSSProperties, useEffect } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
+import { AppContext } from '../utils/AppStore';
 import { speech } from '../utils/common';
 import {
 	GOODS_LENGTH,
@@ -65,16 +67,45 @@ const Quiz = () => {
 	);
 };
 
+async function sendQuestionState(data: any) {
+	const headers = {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+	};
+
+	const resp = await fetch('/api/question', {
+		method: 'POST',
+		headers,
+		body: JSON.stringify(data),
+	});
+
+	const content = await resp.json();
+
+	console.log(content);
+}
+
 const Question: NextPage = () => {
 	const [begin, setBegin] = useState(false);
+	const { data: session } = useSession();
 	const questionHandler = useQuestionStore();
 	const {
-		state: { goods, points },
+		state: { timestamp, goods, points, mode, bads },
 		shuffle,
 	} = questionHandler;
 
 	useEffect(() => {
 		if (goods.length > GOODS_LENGTH - 1) {
+			if (session) {
+				sendQuestionState({
+					action: 'SAVE_QUESTION_HISTORY',
+					timestamp,
+					mode,
+					goods,
+					points,
+					bads,
+				});
+			}
+
 			shuffle();
 		}
 	}, [goods, shuffle]);

@@ -1,10 +1,4 @@
-import {
-	words,
-	randomWords,
-	WordBuffer,
-	quizWords,
-	quizFillWords,
-} from '../utils/common';
+import { quizWords, quizFillWords } from '../utils/common';
 
 // .\node_modules\.bin\jest -- random-all-words.test.ts > random-all-words.test.log
 

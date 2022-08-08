@@ -12,10 +12,11 @@ import {
 export const PAGE_SIZE = 10;
 export const GOODS_LENGTH = 5;
 
-type QuestionMode = 'words' | 'cities';
+export type QuestionMode = 'words' | 'cities';
 
 type QuestionState = {
 	mode: QuestionMode;
+	timestamp: number;
 	data: {
 		left: WordPos[];
 		right: WordPos[];
@@ -23,6 +24,7 @@ type QuestionState = {
 	left: number;
 	right: number;
 	goods: number[];
+	bads: number[];
 	points: number;
 };
 
@@ -40,6 +42,7 @@ const QuestionModes = {
 function initialState(mode: QuestionMode): QuestionState {
 	return {
 		mode,
+		timestamp: new Date().getTime(),
 		data: {
 			left: [],
 			right: [],
@@ -47,6 +50,7 @@ function initialState(mode: QuestionMode): QuestionState {
 		left: -1,
 		right: -1,
 		goods: [],
+		bads: [],
 		points: 0,
 	};
 }
@@ -55,7 +59,8 @@ type QuestionAction =
 	| { type: 'LEFT'; left: number }
 	| { type: 'RIGHT'; right: number }
 	| { type: 'ADD_POINT' }
-	| { type: 'SHUFFLE' };
+	| { type: 'SHUFFLE' }
+	| { type: 'ADD_MISTAKE' };
 
 function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 	const qMode = QuestionModes[state.mode];
@@ -90,6 +95,17 @@ function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 			left: -1,
 			right: -1,
 		};
+	} else if (action.type === 'ADD_MISTAKE') {
+		const bads = [...state.bads];
+
+		if (!bads.includes(state.left)) {
+			bads.push(state.left);
+		}
+		if (!bads.includes(state.right)) {
+			bads.push(state.right);
+		}
+
+		return { ...state, bads };
 	} else {
 		return state;
 	}
@@ -98,7 +114,7 @@ function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 export function useQuestionStore(mode: 'words' | 'cities' = 'words') {
 	const [state, dispatch] = useReducer(reducer, initialState(mode));
 
-	useEffect(() => console.log('Exam State Changed', state), [state]);
+	useEffect(() => console.log('Question State Changed', state), [state]);
 
 	useEffect(() => {
 		if (state.left > -1 && state.left === state.right) {
@@ -113,6 +129,8 @@ export function useQuestionStore(mode: 'words' | 'cities' = 'words') {
 		if (state.left > -1 && state.right > -1 && state.left !== state.right) {
 			// TODO: XHR to send wrong word...
 			speech('Try again!');
+
+			dispatch({ type: 'ADD_MISTAKE' });
 		}
 	}, [state.left, state.right]);
 

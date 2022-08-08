@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react';
+import { QuestionMode } from './QuestionStore';
 
 type AppState = {
 	name: string;
@@ -17,11 +18,22 @@ export function initialState(): AppState {
 	};
 }
 
-type AppAction = { type: 'CHANGE'; name: string };
+type AppAction =
+	| { type: 'CHANGE'; name: string }
+	| {
+			type: 'SAVE_QUESTION_STATE';
+			mode: QuestionMode;
+			points: number;
+			goods: number[];
+			bads: number[];
+	  };
 
 export function reducer(state: AppState, action: AppAction): AppState {
 	if (action.type === 'CHANGE') {
 		return { ...state, name: action.name };
+	} else if (action.type === 'SAVE_QUESTION_STATE') {
+		// TODO: Save Question State - LocalStorage and Server ?
+		return { ...state };
 	} else {
 		return state;
 	}

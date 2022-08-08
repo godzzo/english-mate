@@ -1,48 +1,71 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { promises as fsp, existsSync } from 'fs';
+import { getSession } from 'next-auth/react';
+import {
+	getQuestionHistory,
+	insertQuestionHistory,
+	updateQuestionHistory,
+} from '../../utils/db';
 
-const dataPath = 'data.json';
+type RequestData = {
+	action: 'SAVE_QUESTION_HISTORY';
+	timestamp: number;
+	mode: string;
+	data: any;
+	points: number;
+	goods: number[];
+	bads: number[];
+};
 
-export default async function handler(
+export default async function session(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-	if (req.query.user && req.query.user === 'Fred') {
-		const action = req.query.action;
-		const data = await loadData();
+	const session = await getSession({ req });
+
+	if (session && session.user && req.method === 'POST') {
+		console.log('req.body', req.body);
+
+		const body: RequestData = req.body;
 
 		console.log('Question request', req.query);
 
-		if (action === 'GOOD_WORD') {
-			const goodWord = req.query.word;
+		if (body.action === 'SAVE_QUESTION_HISTORY' && session.user.email) {
+			const email = session.user.email;
 
-			if (!data.goods.includes(goodWord)) {
-				console.log('Question not include', goodWord);
+			const rows = await getQuestionHistory(email, body.timestamp);
 
-				data.goods.push(goodWord);
+			if (rows.length > 0) {
+				const oldData = JSON.parse(rows[0].data);
 
-				const json = JSON.stringify(data, null, 4);
+				const data = {
+					bads: body.bads,
+					points: body.points,
+					goods: [...body.goods, ...oldData.goods],
+				};
 
-				await fsp.writeFile(dataPath, json);
-				console.log('Question write json', json);
+				await updateQuestionHistory(
+					email,
+					body.timestamp,
+					body.mode,
+					JSON.stringify(data)
+				);
+			} else {
+				await insertQuestionHistory(
+					email,
+					body.timestamp,
+					body.mode,
+					JSON.stringify({
+						bads: body.bads,
+						points: body.points,
+						goods: body.goods,
+					})
+				);
 			}
 		}
 
-		res.status(200).json({ result: 'OK', data });
-		console.log('Question respond', data);
+		res.send(JSON.stringify(session, null, 2));
 	} else {
-		res.status(200).json({ result: 'INVALID' });
+		res.send({ error: 'ACCESS_DENIED_NO_SESSION' });
 	}
-}
-
-async function loadData() {
-	let data: any = { goods: [] };
-
-	if (existsSync(dataPath)) {
-		const json = await fsp.readFile(dataPath);
-		data = JSON.parse(json.toString());
-	}
-
-	return data;
 }

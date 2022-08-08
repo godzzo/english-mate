@@ -1,9 +1,24 @@
 # Issues
 
--   Icons for Translate, Clipart
--   'lie' - multiple meanings
+## Waiting
 
-## No BackEnd persistency 😢
+-   [ ] Save QuestionState through AppContext + AppStore
+    -   [ ] Save: Date, Points, Bads (_Missed_ ?), Goods
+    -   [ ] to LocalStorage if SSO Session not available
+    -   [ ] to RDBMS with SSO Session
+-   [ ] Remove shuffle button - it is only for starting the _game_
+-   [ ] Random should use the goods and bads too
+    -   [ ] Maybe for a different view only for Bads for repeating? 🤔
+-   [ ] 'lie' - multiple meanings
+
+## Finished
+
+-   [x] Next Auth + GitHub added 😎
+-   [x] Heroku PostgreSQL added for persistency 😍
+-   [x] Cities set added
+-   [x] Icons for Translate, Clipart with FontAwesome
+
+## OLD - No BackEnd persistency - now we have RDBMS 👍
 
 Vercel has ReadOnly FS could not create JSON files...
 
