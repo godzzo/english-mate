@@ -58,6 +58,7 @@ function initialState(mode: QuestionMode): QuestionState {
 type QuestionAction =
 	| { type: 'LEFT'; left: number }
 	| { type: 'RIGHT'; right: number }
+	| { type: 'HELP'; pos: number }
 	| { type: 'ADD_POINT' }
 	| { type: 'SHUFFLE' }
 	| { type: 'ADD_MISTAKE' };
@@ -95,6 +96,14 @@ function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 			left: -1,
 			right: -1,
 		};
+	} else if (action.type === 'HELP') {
+		const bads = [...state.bads];
+
+		if (!bads.includes(action.pos)) {
+			bads.push(action.pos);
+		}
+
+		return { ...state, bads };
 	} else if (action.type === 'ADD_MISTAKE') {
 		const bads = [...state.bads];
 
@@ -141,6 +150,9 @@ export function useQuestionStore(mode: 'words' | 'cities' = 'words') {
 		},
 		right: (right: number) => {
 			dispatch({ type: 'RIGHT', right });
+		},
+		help: (pos: number) => {
+			dispatch({ type: 'HELP', pos });
 		},
 		shuffle: () => {
 			speech('Words are ready');

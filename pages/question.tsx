@@ -3,7 +3,6 @@ import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useState, useContext, CSSProperties, useEffect } from 'react';
 import { QuizButton, WordMode } from '../components/WordCard';
-import { AppContext } from '../utils/AppStore';
 import { speech } from '../utils/common';
 import {
 	GOODS_LENGTH,
@@ -17,7 +16,12 @@ const stackStyle: CSSProperties = {
 };
 
 const Quiz = () => {
-	const { state, left: onLeft, right: onRight } = useContext(QuestionContext);
+	const {
+		state,
+		left: onLeft,
+		right: onRight,
+		help: onHelp,
+	} = useContext(QuestionContext);
 
 	const getMode = (e: { pos: number }): WordMode =>
 		state.goods.includes(e.pos) ? 'GOOD' : 'BASE';
@@ -38,6 +42,7 @@ const Quiz = () => {
 							<QuizButton
 								mode={mode}
 								onSelect={onLeft}
+								onHelp={onHelp}
 								word={e}
 								key={e.pos}
 							></QuizButton>
@@ -56,6 +61,7 @@ const Quiz = () => {
 						<QuizButton
 							mode={mode}
 							onSelect={onRight}
+							onHelp={onHelp}
 							word={e}
 							lang="hu"
 							key={e.pos}
@@ -115,19 +121,21 @@ const Question: NextPage = () => {
 			<VStack justify="center" marginTop={1} gap="1">
 				<HStack>
 					<Box>Pontok: {points}</Box>
-					<Button
-						colorScheme="purple"
-						onClick={() => {
-							if (!begin) {
-								shuffle();
-								speech("Common. Let's go!");
-							}
+					{!begin && (
+						<Button
+							colorScheme="purple"
+							onClick={() => {
+								if (!begin) {
+									shuffle();
+									speech("Common. Let's go!");
+								}
 
-							setBegin(!begin);
-						}}
-					>
-						Keverés
-					</Button>
+								setBegin(!begin);
+							}}
+						>
+							Kezdés
+						</Button>
+					)}
 				</HStack>
 				{begin && <Quiz />}
 			</VStack>

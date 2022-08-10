@@ -25,11 +25,13 @@ export const QuizButton = ({
 	word,
 	mode,
 	onSelect,
+	onHelp,
 	lang = 'en',
 }: {
 	word: WordPos;
 	mode: WordMode;
 	onSelect: (pos: number) => void;
+	onHelp: (pos: number) => void;
 	lang?: Langs;
 }) => {
 	let color =
@@ -57,6 +59,11 @@ export const QuizButton = ({
 				target="_blank"
 				rel="noreferrer"
 				style={IconStyle}
+				onClick={() => {
+					if (mode !== 'GOOD') {
+						onHelp(word.pos);
+					}
+				}}
 			>
 				<FontAwesomeIcon icon={faGlobe} />
 			</a>
@@ -65,6 +72,11 @@ export const QuizButton = ({
 				href={clipartUrl(word.en)}
 				target="_blank"
 				rel="noreferrer"
+				onClick={() => {
+					if (mode !== 'GOOD') {
+						onHelp(word.pos);
+					}
+				}}
 			>
 				<FontAwesomeIcon icon={faImage} />
 			</a>
