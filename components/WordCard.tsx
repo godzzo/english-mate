@@ -61,6 +61,7 @@ export const QuizButton = ({
 				style={IconStyle}
 				onClick={() => {
 					if (mode !== 'GOOD') {
+						speech('Go to translate');
 						onHelp(word.pos);
 					}
 				}}
@@ -74,6 +75,7 @@ export const QuizButton = ({
 				rel="noreferrer"
 				onClick={() => {
 					if (mode !== 'GOOD') {
+						speech('Go for images');
 						onHelp(word.pos);
 					}
 				}}

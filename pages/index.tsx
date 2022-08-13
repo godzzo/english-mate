@@ -4,8 +4,11 @@ import Link from 'next/link';
 import { useContext } from 'react';
 import LoginButton from '../components/LoginButton';
 import { AppContext } from '../utils/AppStore';
+import { useSession } from 'next-auth/react';
 
 const Menu = () => {
+	const { data: session } = useSession();
+
 	return (
 		<VStack spacing={4} direction="row" align="center">
 			<Link href="/question">
@@ -18,6 +21,13 @@ const Menu = () => {
 					Fővárosok
 				</Button>
 			</Link>
+			{session && (
+				<Link href="/results">
+					<Button colorScheme="blue" size="md">
+						Eredmények
+					</Button>
+				</Link>
+			)}
 		</VStack>
 	);
 };
