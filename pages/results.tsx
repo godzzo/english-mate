@@ -55,11 +55,13 @@ const ResultsView: NextPage = () => {
 							})}
 						</VStack>
 						<VStack>
-							{e.result.goods.map((g, gi) => {
-								const word = words[g];
+							{e.result.goods
+								.filter((g) => !e.result.bads.includes(g))
+								.map((g, gi) => {
+									const word = words[g];
 
-								return <Box key={gi}>{word.en}</Box>;
-							})}
+									return <Box key={gi}>{word.en}</Box>;
+								})}
 						</VStack>
 					</HStack>
 				</VStack>
