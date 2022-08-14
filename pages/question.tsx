@@ -1,94 +1,14 @@
 import { Box, Button, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
-import { useState, useContext, CSSProperties, useEffect } from 'react';
-import { QuizButton, WordMode } from '../components/WordCard';
-import { speech } from '../utils/common';
+import { useState, useEffect } from 'react';
+import { QuizList } from '../components/QuizList';
+import { sendQuestionState, speech } from '../utils/common';
 import {
 	GOODS_LENGTH,
 	QuestionContext,
 	useQuestionStore,
 } from '../utils/QuestionStore';
-
-const stackStyle: CSSProperties = {
-	height: 'calc(100vh - 6rem)',
-	overflowY: 'scroll',
-};
-
-const Quiz = () => {
-	const {
-		state,
-		left: onLeft,
-		right: onRight,
-		help: onHelp,
-	} = useContext(QuestionContext);
-
-	const getMode = (e: { pos: number }): WordMode =>
-		state.goods.includes(e.pos) ? 'GOOD' : 'BASE';
-
-	return (
-		<HStack gap={1}>
-			<VStack style={stackStyle}>
-				{state.data.left
-					.filter((_, i) => i < GOODS_LENGTH)
-					.map((e) => {
-						let mode = getMode(e);
-
-						if (e.pos === state.left) {
-							mode = 'CHOOSEN';
-						}
-
-						return (
-							<QuizButton
-								mode={mode}
-								onSelect={onLeft}
-								onHelp={onHelp}
-								word={e}
-								key={e.pos}
-							></QuizButton>
-						);
-					})}
-			</VStack>
-			<VStack style={stackStyle}>
-				{state.data.right.map((e) => {
-					let mode = getMode(e);
-
-					if (e.pos === state.right) {
-						mode = 'CHOOSEN';
-					}
-
-					return (
-						<QuizButton
-							mode={mode}
-							onSelect={onRight}
-							onHelp={onHelp}
-							word={e}
-							lang="hu"
-							key={e.pos}
-						></QuizButton>
-					);
-				})}
-			</VStack>
-		</HStack>
-	);
-};
-
-async function sendQuestionState(data: any) {
-	const headers = {
-		Accept: 'application/json',
-		'Content-Type': 'application/json',
-	};
-
-	const resp = await fetch('/api/question', {
-		method: 'POST',
-		headers,
-		body: JSON.stringify(data),
-	});
-
-	const content = await resp.json();
-
-	console.log(content);
-}
 
 const Question: NextPage = () => {
 	const [begin, setBegin] = useState(false);
@@ -137,7 +57,7 @@ const Question: NextPage = () => {
 						</Button>
 					)}
 				</HStack>
-				{begin && <Quiz />}
+				{begin && <QuizList />}
 			</VStack>
 		</QuestionContext.Provider>
 	);

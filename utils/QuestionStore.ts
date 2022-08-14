@@ -14,13 +14,15 @@ export const GOODS_LENGTH = 5;
 
 export type QuestionMode = 'words' | 'cities';
 
+export type Data = {
+	left: WordPos[];
+	right: WordPos[];
+};
+
 type QuestionState = {
 	mode: QuestionMode;
 	timestamp: number;
-	data: {
-		left: WordPos[];
-		right: WordPos[];
-	};
+	data: Data;
 	left: number;
 	right: number;
 	goods: number[];
@@ -60,6 +62,7 @@ type QuestionAction =
 	| { type: 'RIGHT'; right: number }
 	| { type: 'HELP'; pos: number }
 	| { type: 'ADD_POINT' }
+	| { type: 'LOAD'; data: Data }
 	| { type: 'SHUFFLE' }
 	| { type: 'ADD_MISTAKE' };
 
@@ -77,6 +80,11 @@ function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 			points: state.points + 1,
 			left: -1,
 			right: -1,
+		};
+	} else if (action.type === 'LOAD') {
+		return {
+			...state,
+			data: action.data,
 		};
 	} else if (action.type === 'SHUFFLE') {
 		const data =
@@ -157,6 +165,10 @@ export function useQuestionStore(mode: 'words' | 'cities' = 'words') {
 		shuffle: () => {
 			speech('Words are ready');
 			dispatch({ type: 'SHUFFLE' });
+		},
+		load: (data: Data) => {
+			speech('Words are ready');
+			dispatch({ type: 'LOAD', data });
 		},
 	};
 

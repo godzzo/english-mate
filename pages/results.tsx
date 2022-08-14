@@ -1,40 +1,10 @@
-import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
 import { VStack, Box, HStack } from '@chakra-ui/react';
-import { serverUrl } from '../utils/config';
 import { words } from '../utils/common';
-
-type History = {
-	email: string;
-	mode: string;
-	timestamp: string;
-	data: string;
-	result: Result;
-};
-
-type Result = {
-	points: number;
-	goods: number[];
-	bads: number[];
-};
+import { useQuizHistory } from '../utils/QuizHistory';
 
 const ResultsView: NextPage = () => {
-	const { data: session } = useSession();
-	const [result, setResult] = useState<History[]>([]);
-
-	useEffect(() => {
-		if (session) {
-			getResult({ action: 'GET_QUESTION_HISTORIES' }).then((data) => {
-				setResult(
-					data.result.map((e: History) => ({
-						...e,
-						result: JSON.parse(e.data),
-					}))
-				);
-			});
-		}
-	}, [session]);
+	const { result } = useQuizHistory();
 
 	return (
 		<VStack>
@@ -71,18 +41,3 @@ const ResultsView: NextPage = () => {
 };
 
 export default ResultsView;
-
-async function getResult(data: any) {
-	const headers = {
-		Accept: 'application/json',
-		'Content-Type': 'application/json',
-	};
-
-	const resp = await fetch(`${serverUrl}/api/question`, {
-		method: 'POST',
-		headers,
-		body: JSON.stringify(data),
-	});
-
-	return resp.json();
-}

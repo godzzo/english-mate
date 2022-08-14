@@ -22,11 +22,18 @@ const Menu = () => {
 				</Button>
 			</Link>
 			{session && (
-				<Link href="/results">
-					<Button colorScheme="blue" size="md">
-						Eredmények
-					</Button>
-				</Link>
+				<>
+					<Link href="/results">
+						<Button colorScheme="blue" size="md">
+							Eredmények
+						</Button>
+					</Link>
+					<Link href="/relearn">
+						<Button colorScheme="blue" size="md">
+							Gyakorlás
+						</Button>
+					</Link>
+				</>
 			)}
 		</VStack>
 	);

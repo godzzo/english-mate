@@ -1,4 +1,5 @@
 import { citiesData } from './cities';
+import { serverUrl } from './config';
 import { wordsData } from './words';
 
 export type Langs = 'hu' | 'en';
@@ -23,8 +24,16 @@ export function clipartUrl(expr: string) {
 	return `${url}?q=${expr}&${parms}`;
 }
 
-export const words: Word[] = wordsData.map((e) => ({ hu: e[0], en: e[1] }));
-export const cities: Word[] = citiesData.map((e) => ({ hu: e[0], en: e[1] }));
+export const words: WordPos[] = wordsData.map((e, pos) => ({
+	hu: e[0],
+	en: e[1],
+	pos,
+}));
+export const cities: WordPos[] = citiesData.map((e, pos) => ({
+	hu: e[0],
+	en: e[1],
+	pos,
+}));
 
 // console.log('words', words);
 
@@ -166,4 +175,36 @@ export function speech(text: string) {
 	speech.text = text;
 
 	window.speechSynthesis.speak(speech);
+}
+
+export async function getResult(data: any, name = 'question') {
+	const headers = {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+	};
+
+	const resp = await fetch(`${serverUrl}/api/${name}`, {
+		method: 'POST',
+		headers,
+		body: JSON.stringify(data),
+	});
+
+	return resp.json();
+}
+
+export async function sendQuestionState(data: any) {
+	const headers = {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+	};
+
+	const resp = await fetch('/api/question', {
+		method: 'POST',
+		headers,
+		body: JSON.stringify(data),
+	});
+
+	const content = await resp.json();
+
+	console.log(content);
 }
