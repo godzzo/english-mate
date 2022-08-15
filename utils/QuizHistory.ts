@@ -21,7 +21,7 @@ export function useQuizHistory() {
 	const [result, setResult] = useState<History[]>([]);
 
 	useEffect(() => {
-		if (session) {
+		if (session && result.length < 1) {
 			getResult({ action: 'GET_QUESTION_HISTORIES' }).then((data) => {
 				setResult(
 					data.result.map((e: History) => ({
@@ -31,7 +31,7 @@ export function useQuizHistory() {
 				);
 			});
 		}
-	}, [session]);
+	}, [session, result.length]);
 
 	return { result };
 }
