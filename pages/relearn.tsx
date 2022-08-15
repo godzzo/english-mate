@@ -1,9 +1,8 @@
-import { Box, Button, HStack, VStack } from '@chakra-ui/react';
+import { Box, HStack, VStack } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { QuizList } from '../components/QuizList';
-import { sendQuestionState, shuffle, speech, words } from '../utils/common';
+import { shuffle, WordPos, words } from '../utils/common';
 import {
 	Data,
 	GOODS_LENGTH,
@@ -12,44 +11,68 @@ import {
 } from '../utils/QuestionStore';
 import { useQuizHistory } from '../utils/QuizHistory';
 
-const RelearnView: NextPage = () => {
+type RelearnContext = {
+	bads: WordPos[];
+	position: number;
+};
+
+const context: RelearnContext = {
+	bads: [],
+	position: 0,
+};
+
+function setSlice(load: (data: Data) => void) {
+	const end = context.position + GOODS_LENGTH;
+	const selected = context.bads.slice(context.position, end);
+	context.position = context.position + GOODS_LENGTH;
+
+	load({
+		left: shuffle([...selected]),
+		right: shuffle([...selected]),
+	});
+}
+
+const RelearnView = () => {
 	const { result } = useQuizHistory();
-	// const [data, setData] = useState<null | Data>(null);
-	// const { data: session } = useSession();
-	const questionHandler = useQuestionStore();
 	const {
 		state: { timestamp, goods, points, mode, bads },
 		load,
-	} = questionHandler;
+	} = useContext(QuestionContext);
 
 	useEffect(() => {
-		if (result.length > 0) {
-			const bads = Array.from(
+		if (result.length > 0 && context.bads.length < 1) {
+			context.bads = Array.from(
 				new Set(result.flatMap((e) => e.result.bads))
 			).map((e) => words[e]);
 
-			load({
-				left: shuffle([...bads]),
-				right: shuffle([...bads]),
-			});
+			setSlice(load);
 		}
-	}, [result]);
+	}, [result, load]);
 
 	useEffect(() => {
 		if (goods.length > GOODS_LENGTH - 1) {
+			setSlice(load);
 		}
-	}, [goods, shuffle]);
+	}, [goods, load]);
+
+	return (
+		<VStack justify="center" marginTop={1} gap="1">
+			<HStack>
+				<Box>Pontok: {points}</Box>
+			</HStack>
+			{result.length > 0 && <QuizList />}
+		</VStack>
+	);
+};
+
+const RelearnPage: NextPage = () => {
+	const questionHandler = useQuestionStore();
 
 	return (
 		<QuestionContext.Provider value={questionHandler}>
-			<VStack justify="center" marginTop={1} gap="1">
-				<HStack>
-					<Box>Pontok: {points}</Box>
-				</HStack>
-				{result.length > 0 && <QuizList />}
-			</VStack>
+			<RelearnView />
 		</QuestionContext.Provider>
 	);
 };
 
-export default RelearnView;
+export default RelearnPage;

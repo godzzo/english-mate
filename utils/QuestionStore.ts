@@ -85,6 +85,9 @@ function reducer(state: QuestionState, action: QuestionAction): QuestionState {
 		return {
 			...state,
 			data: action.data,
+			goods: [],
+			left: -1,
+			right: -1,
 		};
 	} else if (action.type === 'SHUFFLE') {
 		const data =
